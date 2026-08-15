@@ -2,11 +2,13 @@ import { Routes, Route } from "react-router-dom";
 import "./App.css";
 
 import Navbar from "./components/Navbar";
+
 import Home from "./pages/Home";
-import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
-import ProtectedRoute from "./routes/ProtectedRoute";
+
+import Login from "./features/auth/Login";
+import ProtectedRoute from "./features/auth/ProtectedRoute";
 
 function App() {
   return (
@@ -28,7 +30,10 @@ function App() {
             }
           />
 
-          <Route path="*" element={<NotFound />} />
+          <Route
+            path="*"
+            element={<NotFound />}
+          />
         </Routes>
       </main>
     </>

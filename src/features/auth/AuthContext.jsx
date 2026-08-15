@@ -2,62 +2,75 @@ import {
   createContext,
   useContext,
   useEffect,
-  useMemo,
-  useReducer,
+  useState,
 } from "react";
-import authReducer from "./authReducer";
+
+import {
+  getStoredUser,
+  getToken,
+  loginUser,
+  logoutUser,
+} from "./authService";
 
 const AuthContext = createContext(null);
 
-function getStoredUser() {
-  const saved = localStorage.getItem("task-manager-user");
-
-  if (!saved) {
-    return null;
-  }
-
-  try {
-    return JSON.parse(saved);
-  } catch {
-    return null;
-  }
-}
-
 export function AuthProvider({ children }) {
-  const [state, dispatch] = useReducer(authReducer, {
-    user: getStoredUser(),
-    isAuthenticated: Boolean(getStoredUser()),
-  });
+  const [user, setUser] = useState(null);
+  const [token, setToken] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (state.user) {
-      localStorage.setItem("task-manager-user", JSON.stringify(state.user));
-      return;
+    const storedToken = getToken();
+    const storedUser = getStoredUser();
+
+    if (storedToken && storedUser) {
+      setToken(storedToken);
+      setUser(storedUser);
     }
 
-    localStorage.removeItem("task-manager-user");
-  }, [state.user]);
+    setLoading(false);
+  }, []);
 
-  const value = useMemo(
-    () => ({
-      ...state,
-      login: (user) => dispatch({ type: "LOGIN", payload: user }),
-      logout: () => dispatch({ type: "LOGOUT" }),
-    }),
-    [state],
+  const login = async (email, password) => {
+    const data = await loginUser(email, password);
+
+    setToken(data.token);
+    setUser(data.user);
+
+    return data;
+  };
+
+  const logout = () => {
+    logoutUser();
+
+    setToken(null);
+    setUser(null);
+  };
+
+  const value = {
+    user,
+    token,
+    loading,
+    isAuthenticated: Boolean(token),
+    login,
+    logout,
+  };
+
+  return (
+    <AuthContext.Provider value={value}>
+      {children}
+    </AuthContext.Provider>
   );
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {
   const context = useContext(AuthContext);
 
   if (!context) {
-    throw new Error("useAuth must be used within AuthProvider");
+    throw new Error(
+      "useAuth AuthProvider daxilində istifadə olunmalıdır."
+    );
   }
 
   return context;
 }
-
-export default AuthContext;

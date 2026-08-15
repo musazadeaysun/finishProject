@@ -1,76 +1,107 @@
 import { useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "./AuthContext";
 
 function Login() {
-  const navigate = useNavigate();
   const { login, isAuthenticated } = useAuth();
-  const [formData, setFormData] = useState({ name: "", password: "" });
+
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const from = location.state?.from?.pathname || "/dashboard";
 
   if (isAuthenticated) {
-    return <Navigate to="/dashboard" replace />;
+    navigate("/dashboard", { replace: true });
   }
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setFormData((current) => ({ ...current, [name]: value }));
-  };
-
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const trimmedName = formData.name.trim();
+    setError("");
 
-    if (!trimmedName || !formData.password.trim()) {
-      setError("Please enter a name and password.");
+    if (!email || !password) {
+      setError("Email və şifrəni daxil edin.");
       return;
     }
 
-    login({
-      name: trimmedName,
-      email: `${trimmedName.toLowerCase()}@taskmanager.dev`,
-    });
-    navigate("/dashboard", { replace: true });
+    try {
+      setLoading(true);
+
+      await login(email, password);
+
+      navigate(from, { replace: true });
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="auth-page">
+    <section className="page">
       <div className="auth-card">
-        <p className="eyebrow">Task Manager</p>
         <h1>Login</h1>
 
-        <form onSubmit={handleSubmit} className="auth-form">
-          <label>
-            Full name
-            <input
-              type="text"
-              name="name"
-              placeholder="Enter your name"
-              value={formData.name}
-              onChange={handleChange}
-            />
-          </label>
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="email">
+              Email
+            </label>
 
-          <label>
-            Password
             <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(event) =>
+                setEmail(event.target.value)
+              }
+              placeholder="user@gmail.com"
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="password">
+              Şifrə
+            </label>
+
+            <input
+              id="password"
               type="password"
-              name="password"
-              placeholder="Enter your password"
-              value={formData.password}
-              onChange={handleChange}
+              value={password}
+              onChange={(event) =>
+                setPassword(event.target.value)
+              }
+              placeholder="123456"
             />
-          </label>
+          </div>
 
-          {error && <p className="form-error">{error}</p>}
+          {error && (
+            <p className="error-message">
+              {error}
+            </p>
+          )}
 
-          <button type="submit" className="primary-btn">
-            Sign in
+          <button type="submit" disabled={loading}>
+            {loading ? "Daxil olunur..." : "Login"}
           </button>
         </form>
+
+        <div className="demo-info">
+          <p>
+            <strong>Demo hesab:</strong>
+          </p>
+
+          <p>Email: user@gmail.com</p>
+          <p>Şifrə: 123456</p>
+        </div>
       </div>
-    </div>
+    </section>
   );
 }
 
