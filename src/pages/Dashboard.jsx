@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-
+import ErrorTest from "../components/ErrorTest";
 import { useAuth } from "../features/auth/AuthContext";
 import TaskList from "../features/tasks/TaskList";
 
@@ -16,25 +16,27 @@ function Dashboard() {
     });
   };
 
-  return (
-    <section className="page">
-      <div className="dashboard-header">
-        <div>
-          <h1>Dashboard</h1>
+return (
+  <section className="page">
+    <div className="dashboard-header">
+      <div>
+        <h1>Dashboard</h1>
 
-          <p>
-            Xoş gəlmisən, {user?.name}! 👋
-          </p>
-        </div>
-
-        <button onClick={handleLogout}>
-          Logout
-        </button>
+        <p>
+          Xoş gəlmisən, {user?.name}! 
+        </p>
       </div>
 
-      <TaskList />
-    </section>
-  );
+      <button onClick={handleLogout}>
+        Logout
+      </button>
+    </div>
+
+    <TaskList />
+
+    <ErrorTest />
+  </section>
+);
 }
 
 export default Dashboard;

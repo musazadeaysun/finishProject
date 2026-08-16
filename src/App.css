@@ -240,3 +240,55 @@ button:disabled {
 .task-item {
   transition: opacity 0.2s ease;
 }
+.error-boundary {
+  min-height: 100vh;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+}
+
+.error-boundary-card {
+  width: 100%;
+  max-width: 500px;
+
+  padding: 40px;
+
+  text-align: center;
+
+  background: white;
+  border-radius: 12px;
+
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.error-boundary-card h1 {
+  margin-bottom: 15px;
+}
+
+.error-boundary-card p {
+  margin-bottom: 25px;
+}
+
+.error-details {
+  margin-top: 25px;
+  text-align: left;
+}
+
+.error-details summary {
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+.error-details pre {
+  padding: 15px;
+  overflow-x: auto;
+
+  background: #f5f5f5;
+  border-radius: 6px;
+
+  font-size: 13px;
+  white-space: pre-wrap;
+}

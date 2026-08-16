@@ -167,3 +167,41 @@ npm run dev
 command ilə başladılır.
 
 Bu checkpoint nəticəsində Task Manager artıq mock backend ilə işləyən CRUD tətbiqinə çevrilmişdir.
+
+## Checkpoint 6 — Error Boundary
+
+Bu mərhələdə React tətbiqində baş verən gözlənilməz render xətalarının bütün tətbiqi çökdürməsinin qarşısını almaq üçün Error Boundary əlavə edilmişdir.
+
+### Görülən işlər
+
+* `ErrorBoundary` class component-i yaradıldı.
+* `getDerivedStateFromError` lifecycle metodu istifadə edildi.
+* `componentDidCatch` vasitəsilə xətaların loglanması təmin edildi.
+* Tətbiqin əsas komponent ağacı Error Boundary ilə əhatə edildi.
+* Xəta baş verdikdə istifadəçiyə fallback UI göstərilir.
+* İstifadəçiyə səhifəni yeniləmək imkanı verildi.
+* Development mühitində texniki xəta məlumatlarının göstərilməsi əlavə edildi.
+* Error Boundary-nin işləməsini yoxlamaq üçün test komponenti yaradıldı.
+
+### Fallback UI
+
+Xəta baş verdikdə istifadəçiyə:
+
+```text
+😕 Nəsə səhv getdi
+
+Tətbiqdə gözlənilməz xəta baş verdi.
+
+[Səhifəni yenilə]
+```
+
+mesajı göstərilir.
+
+### İstifadə olunan React xüsusiyyətləri
+
+* Class Components
+* `getDerivedStateFromError`
+* `componentDidCatch`
+* Error Boundary pattern
+
+Bu mərhələ nəticəsində komponentlərdən birində render xətası yarandıqda bütün tətbiqin ağ ekranla çökməsinin qarşısı alınmışdır.
