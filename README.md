@@ -118,3 +118,52 @@ Bu mərhələdə Task Manager layihəsində task əlavə etmə və redaktə etm�
 
 
 Bu mərhələdə əlavə form kitabxanasından istifadə edilməmiş, validation manual şəkildə React state və JavaScript vasitəsilə həyata keçirilmişdir.
+## Checkpoint 5 — Mock API və CRUD Əməliyyatları
+
+Bu mərhələdə Task Manager layihəsinə `json-server` vasitəsilə mock backend əlavə edilmişdir. Task məlumatları artıq yalnız React state-də deyil, `db.json` faylında saxlanılır.
+
+### Görülən işlər
+
+* `json-server` layihəyə əlavə edildi.
+* `db.json` mock database kimi yaradıldı.
+* Task API üçün `GET`, `POST`, `PATCH` və `DELETE` əməliyyatları yaradıldı.
+* API sorğuları ayrıca `taskService.js` faylında təşkil edildi.
+* Tətbiq açıldıqda tasklar API-dən yüklənir.
+* Yeni task əlavə edildikdə API-yə `POST` sorğusu göndərilir.
+* Task redaktə edildikdə `PATCH` sorğusu göndərilir.
+* Task silindikdə `DELETE` sorğusu göndərilir.
+* Task tamamlanma statusu dəyişdikdə `PATCH` sorğusu göndərilir.
+* API xətaları istifadəçiyə göstərilir.
+* Taskların yüklənməsi zamanı loading vəziyyəti göstərilir.
+
+### Optimistic UI
+
+Task əlavə etmə, silmə, redaktə və status dəyişdirmə zamanı əvvəlcə istifadəçi interfeysi yenilənir. Daha sonra API sorğusu göndərilir.
+
+Əgər API əməliyyatı uğurlu olarsa, dəyişiklik saxlanılır.
+
+Əgər API əməliyyatı uğursuz olarsa, əvvəlki state bərpa edilir. Bu yanaşma optimistic UI və rollback mexanizmini təmin edir.
+
+### Mock server
+
+Layihədə mock server aşağıdakı command ilə başladılır:
+
+```bash
+npm run server
+```
+
+Mock API:
+
+```text
+http://localhost:3001/tasks
+```
+
+Frontend isə ayrıca:
+
+```bash
+npm run dev
+```
+
+command ilə başladılır.
+
+Bu checkpoint nəticəsində Task Manager artıq mock backend ilə işləyən CRUD tətbiqinə çevrilmişdir.

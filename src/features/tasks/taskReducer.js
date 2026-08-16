@@ -4,6 +4,12 @@ const initialState = {
 
 export function taskReducer(state, action) {
   switch (action.type) {
+    case "SET_TASKS":
+      return {
+        ...state,
+        tasks: action.payload,
+      };
+
     case "ADD_TASK":
       return {
         ...state,
@@ -44,10 +50,24 @@ export function taskReducer(state, action) {
         ),
       };
 
-    case "SET_TASKS":
+    case "UPDATE_TASK_FROM_SERVER":
       return {
         ...state,
-        tasks: action.payload,
+        tasks: state.tasks.map((task) =>
+          task.id === action.payload.temporaryId
+            ? action.payload.task
+            : task
+        ),
+      };
+
+    case "REPLACE_TASK":
+      return {
+        ...state,
+        tasks: state.tasks.map((task) =>
+          task.id === action.payload.id
+            ? action.payload
+            : task
+        ),
       };
 
     case "CLEAR_TASKS":

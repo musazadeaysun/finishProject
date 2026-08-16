@@ -1,12 +1,20 @@
 import { useState } from "react";
+
 import { useTasks } from "./TaskContext";
 import TaskItem from "./TaskItem";
 
 function TaskList() {
-  const { tasks, addTask, clearTasks } = useTasks();
+  const {
+    tasks,
+    addTask,
+    clearError,
+    error,
+    loading,
+  } = useTasks();
 
   const [title, setTitle] = useState("");
-  const [error, setError] = useState("");
+  const [validationError, setValidationError] =
+    useState("");
 
   const validateTitle = (value) => {
     const trimmedValue = value.trim();
@@ -31,29 +39,50 @@ function TaskList() {
 
     setTitle(value);
 
+    if (validationError) {
+      setValidationError(
+        validateTitle(value)
+      );
+    }
+
     if (error) {
-      setError(validateTitle(value));
+      clearError();
     }
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const validationError = validateTitle(title);
+    const errorMessage =
+      validateTitle(title);
 
-    if (validationError) {
-      setError(validationError);
+    if (errorMessage) {
+      setValidationError(errorMessage);
       return;
     }
 
-    addTask(title.trim());
+    await addTask(title.trim());
 
     setTitle("");
-    setError("");
+    setValidationError("");
   };
+
+  if (loading) {
+    return (
+      <div className="task-section">
+        <p>Tasklar yüklənir...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="task-section">
+      {error && (
+        <div className="api-error">
+          {error}
+        </div>
+      )}
+
       <form
         className="task-form"
         onSubmit={handleSubmit}
@@ -66,18 +95,14 @@ function TaskList() {
             onChange={handleChange}
             placeholder="Yeni task yaz..."
             maxLength={100}
-            aria-invalid={Boolean(error)}
-            aria-describedby={
-              error ? "task-error" : undefined
-            }
+            aria-invalid={Boolean(
+              validationError
+            )}
           />
 
-          {error && (
-            <p
-              id="task-error"
-              className="field-error"
-            >
-              {error}
+          {validationError && (
+            <p className="field-error">
+              {validationError}
             </p>
           )}
         </div>
@@ -101,13 +126,6 @@ function TaskList() {
               />
             ))}
           </div>
-
-          <button
-            className="clear-button"
-            onClick={clearTasks}
-          >
-            Bütün taskları sil
-          </button>
         </>
       )}
     </div>

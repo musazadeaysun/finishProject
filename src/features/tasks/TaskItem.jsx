@@ -1,4 +1,5 @@
 import { useState } from "react";
+
 import { useTasks } from "./TaskContext";
 
 function TaskItem({ task }) {
@@ -14,7 +15,8 @@ function TaskItem({ task }) {
   const [editTitle, setEditTitle] =
     useState(task.title);
 
-  const [error, setError] = useState("");
+  const [error, setError] =
+    useState("");
 
   const validateTitle = (value) => {
     const trimmedValue = value.trim();
@@ -44,7 +46,7 @@ function TaskItem({ task }) {
     }
   };
 
-  const handleUpdate = () => {
+  const handleUpdate = async () => {
     const validationError =
       validateTitle(editTitle);
 
@@ -53,7 +55,7 @@ function TaskItem({ task }) {
       return;
     }
 
-    updateTask(
+    await updateTask(
       task.id,
       editTitle.trim()
     );
@@ -77,7 +79,6 @@ function TaskItem({ task }) {
             value={editTitle}
             onChange={handleChange}
             maxLength={100}
-            aria-invalid={Boolean(error)}
           />
 
           {error && (
