@@ -6,12 +6,15 @@ import "./index.css";
 
 import App from "./App";
 import { AuthProvider } from "./features/auth/AuthContext";
+import { TaskProvider } from "./features/tasks/TaskContext";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>
       <AuthProvider>
-        <App />
+        <TaskProvider>
+          <App />
+        </TaskProvider>
       </AuthProvider>
     </BrowserRouter>
   </StrictMode>

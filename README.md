@@ -61,61 +61,38 @@ Email: user@gmail.com
 Şifrə: 123456
 ```
 
-### Authentication məlumatlarının saxlanması
-
-```text
-localStorage
-├── authToken
-└── authUser
-```
-
-### Authentication axını
-
-```text
-Login Form
-    ↓
-AuthContext
-    ↓
-authService
-    ↓
-Mock user yoxlaması
-    ↓
-Token yaradılır
-    ↓
-localStorage
-    ↓
-Dashboard
-```
-
-### Refresh zamanı
-
-```text
-Browser refresh
-      ↓
-AuthProvider
-      ↓
-localStorage yoxlanılır
-      ↓
-Token + user tapılır
-      ↓
-Sessiya bərpa olunur
-```
-
-### Logout zamanı
-
-```text
-Logout
-   ↓
-authToken silinir
-authUser silinir
-   ↓
-AuthContext state təmizlənir
-   ↓
-Login səhifəsinə yönləndirilir
-```
 
 ### Token expiration simulyasiyası
 
 Token `localStorage`-dan silindikdə istifadəçi artıq autentifikasiya olunmuş hesab edilmir. Qorunan route-a yenidən daxil olmaq istədikdə `ProtectedRoute` istifadəçini Login səhifəsinə yönləndirir.
 
 Bu mərhələdə authentication mock API vasitəsilə simulyasiya edilmişdir. Növbəti mərhələdə qlobal state və daha sonra mock API üzərindən CRUD əməliyyatları əlavə ediləcək.
+
+## Checkpoint 3 — Qlobal State İdarəetməsi
+
+Bu mərhələdə Task Manager layihəsində qlobal state idarəetməsi üçün **Context API və useReducer** istifadə edilmişdir.
+
+### Görülən işlər
+
+* Task məlumatlarının qlobal state-də saxlanması təmin edildi.
+* `TaskContext` yaradıldı.
+* `useReducer` vasitəsilə task state-in idarə olunması həyata keçirildi.
+* `TaskProvider` bütün tətbiqi əhatə edəcək şəkildə əlavə edildi.
+* Task əlavə etmək üçün `ADD_TASK` action yaradıldı.
+* Task silmək üçün `DELETE_TASK` action yaradıldı.
+* Task-ın tamamlanma vəziyyətini dəyişmək üçün `TOGGLE_TASK` action yaradıldı.
+* Task məlumatını redaktə etmək üçün `UPDATE_TASK` action yaradıldı.
+* Bütün taskları təmizləmək üçün `CLEAR_TASKS` action yaradıldı.
+* Task siyahısını yeniləmək üçün `SET_TASKS` action əlavə edildi.
+* `useTasks` custom hook-u yaradılaraq Context istifadəsi sadələşdirildi.
+* Task komponentləri arasında lazımsız prop drilling-in qarşısı alındı.
+
+### İstifadə olunan texnologiyalar
+
+* React Context API
+* `useReducer`
+* Custom Hooks
+* React Components
+* JavaScript
+
+Bu checkpoint nəticəsində task məlumatlarının komponentlər arasında prop drilling olmadan qlobal şəkildə idarə olunması təmin edilmişdir.

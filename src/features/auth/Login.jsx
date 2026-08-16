@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "./AuthContext";
 
@@ -16,9 +16,11 @@ function Login() {
 
   const from = location.state?.from?.pathname || "/dashboard";
 
-  if (isAuthenticated) {
-    navigate("/dashboard", { replace: true });
-  }
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/dashboard", { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -62,6 +64,7 @@ function Login() {
                 setEmail(event.target.value)
               }
               placeholder="user@gmail.com"
+              autoComplete="email"
             />
           </div>
 
@@ -78,6 +81,7 @@ function Login() {
                 setPassword(event.target.value)
               }
               placeholder="123456"
+              autoComplete="current-password"
             />
           </div>
 

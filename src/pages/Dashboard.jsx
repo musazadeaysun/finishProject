@@ -1,8 +1,11 @@
 import { useNavigate } from "react-router-dom";
+
 import { useAuth } from "../features/auth/AuthContext";
+import TaskList from "../features/tasks/TaskList";
 
 function Dashboard() {
   const { user, logout } = useAuth();
+
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -15,21 +18,21 @@ function Dashboard() {
 
   return (
     <section className="page">
-      <h1>Dashboard</h1>
+      <div className="dashboard-header">
+        <div>
+          <h1>Dashboard</h1>
 
-      <div className="dashboard-card">
-        <h2>
-          Xoş gəlmisən, {user?.name}! 👋
-        </h2>
-
-        <p>
-          Email: {user?.email}
-        </p>
+          <p>
+            Xoş gəlmisən, {user?.name}! 👋
+          </p>
+        </div>
 
         <button onClick={handleLogout}>
           Logout
         </button>
       </div>
+
+      <TaskList />
     </section>
   );
 }
