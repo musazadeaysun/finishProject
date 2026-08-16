@@ -3,25 +3,53 @@ import { useTasks } from "./TaskContext";
 import TaskItem from "./TaskItem";
 
 function TaskList() {
-  const {
-    tasks,
-    addTask,
-    clearTasks,
-  } = useTasks();
+  const { tasks, addTask, clearTasks } = useTasks();
 
   const [title, setTitle] = useState("");
+  const [error, setError] = useState("");
+
+  const validateTitle = (value) => {
+    const trimmedValue = value.trim();
+
+    if (!trimmedValue) {
+      return "Task adı boş ola bilməz.";
+    }
+
+    if (trimmedValue.length < 3) {
+      return "Task adı ən azı 3 simvoldan ibarət olmalıdır.";
+    }
+
+    if (trimmedValue.length > 100) {
+      return "Task adı maksimum 100 simvol ola bilər.";
+    }
+
+    return "";
+  };
+
+  const handleChange = (event) => {
+    const value = event.target.value;
+
+    setTitle(value);
+
+    if (error) {
+      setError(validateTitle(value));
+    }
+  };
 
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    const trimmedTitle = title.trim();
+    const validationError = validateTitle(title);
 
-    if (!trimmedTitle) {
+    if (validationError) {
+      setError(validationError);
       return;
     }
 
-    addTask(trimmedTitle);
+    addTask(title.trim());
+
     setTitle("");
+    setError("");
   };
 
   return (
@@ -29,15 +57,30 @@ function TaskList() {
       <form
         className="task-form"
         onSubmit={handleSubmit}
+        noValidate
       >
-        <input
-          type="text"
-          value={title}
-          onChange={(event) =>
-            setTitle(event.target.value)
-          }
-          placeholder="Yeni task yaz..."
-        />
+        <div className="task-input-wrapper">
+          <input
+            type="text"
+            value={title}
+            onChange={handleChange}
+            placeholder="Yeni task yaz..."
+            maxLength={100}
+            aria-invalid={Boolean(error)}
+            aria-describedby={
+              error ? "task-error" : undefined
+            }
+          />
+
+          {error && (
+            <p
+              id="task-error"
+              className="field-error"
+            >
+              {error}
+            </p>
+          )}
+        </div>
 
         <button type="submit">
           Əlavə et

@@ -96,3 +96,25 @@ Bu mərhələdə Task Manager layihəsində qlobal state idarəetməsi üçün *
 * JavaScript
 
 Bu checkpoint nəticəsində task məlumatlarının komponentlər arasında prop drilling olmadan qlobal şəkildə idarə olunması təmin edilmişdir.
+## Checkpoint 4 — Validasiyalı Formlar
+
+Bu mərhələdə Task Manager layihəsində task əlavə etmə və redaktə etmə formalarına manual validation əlavə edilmişdir.
+
+### Görülən işlər
+
+* Task əlavə etmə forması validasiya edildi.
+* Task adı boş buraxıldıqda xəta mesajı göstərilir.
+* Task adının minimum 3 simvol olması tələb olunur.
+* Task adının maksimum 100 simvol olması təmin edildi.
+* `maxLength` atributundan istifadə edildi.
+* İstifadəçi input-a yenidən yazmağa başladıqda validation mesajı yenilənir.
+* Düzgün məlumat daxil edilmədən form submit edilmir.
+* Task redaktə forması üçün də eyni validation qaydaları tətbiq edildi.
+* Edit zamanı səhv məlumat daxil edildikdə task yenilənmir.
+* Edit əməliyyatını ləğv etmək üçün `Ləğv et` düyməsi əlavə edildi.
+* Validation error-lar istifadəçiyə input-un altında göstərilir.
+* `aria-invalid` və `aria-describedby` atributlarından istifadə edilərək form accessibility yaxşılaşdırıldı.
+* Form submit zamanı `preventDefault()` istifadə edildi.
+
+
+Bu mərhələdə əlavə form kitabxanasından istifadə edilməmiş, validation manual şəkildə React state və JavaScript vasitəsilə həyata keçirilmişdir.

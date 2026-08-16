@@ -14,27 +14,78 @@ function TaskItem({ task }) {
   const [editTitle, setEditTitle] =
     useState(task.title);
 
-  const handleUpdate = () => {
-    const trimmedTitle = editTitle.trim();
+  const [error, setError] = useState("");
 
-    if (!trimmedTitle) {
+  const validateTitle = (value) => {
+    const trimmedValue = value.trim();
+
+    if (!trimmedValue) {
+      return "Task adı boş ola bilməz.";
+    }
+
+    if (trimmedValue.length < 3) {
+      return "Task adı ən azı 3 simvoldan ibarət olmalıdır.";
+    }
+
+    if (trimmedValue.length > 100) {
+      return "Task adı maksimum 100 simvol ola bilər.";
+    }
+
+    return "";
+  };
+
+  const handleChange = (event) => {
+    const value = event.target.value;
+
+    setEditTitle(value);
+
+    if (error) {
+      setError(validateTitle(value));
+    }
+  };
+
+  const handleUpdate = () => {
+    const validationError =
+      validateTitle(editTitle);
+
+    if (validationError) {
+      setError(validationError);
       return;
     }
 
-    updateTask(task.id, trimmedTitle);
+    updateTask(
+      task.id,
+      editTitle.trim()
+    );
+
+    setError("");
+    setIsEditing(false);
+  };
+
+  const handleCancel = () => {
+    setEditTitle(task.title);
+    setError("");
     setIsEditing(false);
   };
 
   return (
     <div className="task-item">
       {isEditing ? (
-        <input
-          type="text"
-          value={editTitle}
-          onChange={(event) =>
-            setEditTitle(event.target.value)
-          }
-        />
+        <div className="edit-wrapper">
+          <input
+            type="text"
+            value={editTitle}
+            onChange={handleChange}
+            maxLength={100}
+            aria-invalid={Boolean(error)}
+          />
+
+          {error && (
+            <p className="field-error">
+              {error}
+            </p>
+          )}
+        </div>
       ) : (
         <span
           className={
@@ -52,14 +103,22 @@ function TaskItem({ task }) {
 
       <div className="task-actions">
         {isEditing ? (
-          <button onClick={handleUpdate}>
-            Yadda saxla
-          </button>
+          <>
+            <button onClick={handleUpdate}>
+              Yadda saxla
+            </button>
+
+            <button onClick={handleCancel}>
+              Ləğv et
+            </button>
+          </>
         ) : (
           <button
-            onClick={() =>
-              setIsEditing(true)
-            }
+            onClick={() => {
+              setEditTitle(task.title);
+              setError("");
+              setIsEditing(true);
+            }}
           >
             Redaktə
           </button>
