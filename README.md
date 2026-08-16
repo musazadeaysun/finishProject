@@ -188,7 +188,7 @@ Bu mərhələdə React tətbiqində baş verən gözlənilməz render xətaları
 Xəta baş verdikdə istifadəçiyə:
 
 ```text
-😕 Nəsə səhv getdi
+ Nəsə səhv getdi
 
 Tətbiqdə gözlənilməz xəta baş verdi.
 
@@ -205,3 +205,43 @@ mesajı göstərilir.
 * Error Boundary pattern
 
 Bu mərhələ nəticəsində komponentlərdən birində render xətası yarandıqda bütün tətbiqin ağ ekranla çökməsinin qarşısı alınmışdır.
+# Checkpoint 7 — Kod Strukturu
+
+## Məqsəd
+
+Layihənin kod strukturunu daha səliqəli və idarəolunan etmək üçün feature-based qovluq strukturu tətbiq edilmişdir.
+
+## İstifadə olunan struktur
+
+```text
+src/
+│
+├── components/
+│   ├── ErrorBoundary.jsx
+│   ├── ErrorTest.jsx
+│   └── Navbar.jsx
+│
+├── features/
+│   │
+│   ├── auth/
+│   │   ├── AuthContext.jsx
+│   │   ├── authService.js
+│   │   ├── Login.jsx
+│   │   └── ProtectedRoute.jsx
+│   │
+│   └── tasks/
+│       ├── TaskContext.jsx
+│       ├── TaskItem.jsx
+│       ├── TaskList.jsx
+│       ├── taskReducer.js
+│       └── taskService.js
+│
+├── pages/
+│   ├── Dashboard.jsx
+│   ├── Home.jsx
+│   └── NotFound.jsx
+│
+├── App.jsx
+├── App.css
+├── index.css
+└── main.jsx

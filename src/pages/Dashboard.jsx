@@ -1,5 +1,4 @@
 import { useNavigate } from "react-router-dom";
-import ErrorTest from "../components/ErrorTest";
 import { useAuth } from "../features/auth/AuthContext";
 import TaskList from "../features/tasks/TaskList";
 
@@ -34,7 +33,6 @@ return (
 
     <TaskList />
 
-    <ErrorTest />
   </section>
 );
 }

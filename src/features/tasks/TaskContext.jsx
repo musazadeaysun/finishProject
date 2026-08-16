@@ -15,6 +15,9 @@ import {
   updateTask,
 } from "./taskService";
 
+import { useAuth } from "../auth/AuthContext";
+import { validateToken } from "../auth/authService";
+
 const TaskContext = createContext(null);
 
 const initialState = {
@@ -22,6 +25,8 @@ const initialState = {
 };
 
 export function TaskProvider({ children }) {
+  const { logout, isAuthenticated } = useAuth();
+
   const [state, dispatch] = useReducer(
     taskReducer,
     initialState
@@ -30,11 +35,21 @@ export function TaskProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  // TASKLARI YÜKLƏ
   useEffect(() => {
+    // Login olmayıbsa API çağırma
+    if (!isAuthenticated) {
+      setLoading(false);
+      return;
+    }
+
     const loadTasks = async () => {
       try {
         setLoading(true);
         setError("");
+
+        // Token-i yoxla
+        validateToken();
 
         const tasks = await getTasks();
 
@@ -43,6 +58,12 @@ export function TaskProvider({ children }) {
           payload: tasks,
         });
       } catch (error) {
+        // Token expired / 401
+        if (error.status === 401) {
+          logout();
+          return;
+        }
+
         setError(error.message);
       } finally {
         setLoading(false);
@@ -50,8 +71,9 @@ export function TaskProvider({ children }) {
     };
 
     loadTasks();
-  }, []);
+  }, [isAuthenticated, logout]);
 
+  // TASK ƏLAVƏ ET
   const addTask = async (title) => {
     const temporaryId = `temp-${Date.now()}`;
 
@@ -68,8 +90,13 @@ export function TaskProvider({ children }) {
     });
 
     try {
-      const createdTask = await createTask(newTask);
+      // Token yoxla
+      validateToken();
 
+      const createdTask =
+        await createTask(newTask);
+
+      // Server-dən gələn task ilə temporary task-i dəyiş
       dispatch({
         type: "UPDATE_TASK_FROM_SERVER",
         payload: {
@@ -84,10 +111,17 @@ export function TaskProvider({ children }) {
         payload: temporaryId,
       });
 
+      // 401
+      if (error.status === 401) {
+        logout();
+        return;
+      }
+
       setError(error.message);
     }
   };
 
+  // TASK SİL
   const deleteTaskById = async (id) => {
     const previousTask = state.tasks.find(
       (task) => task.id === id
@@ -100,6 +134,9 @@ export function TaskProvider({ children }) {
     });
 
     try {
+      // Token yoxla
+      validateToken();
+
       await deleteTask(id);
     } catch (error) {
       // Rollback
@@ -110,10 +147,17 @@ export function TaskProvider({ children }) {
         });
       }
 
+      // 401
+      if (error.status === 401) {
+        logout();
+        return;
+      }
+
       setError(error.message);
     }
   };
 
+  // TASK STATUS DƏYİŞ
   const toggleTask = async (id) => {
     const previousTask = state.tasks.find(
       (task) => task.id === id
@@ -135,6 +179,9 @@ export function TaskProvider({ children }) {
     });
 
     try {
+      // Token yoxla
+      validateToken();
+
       await updateTask(id, {
         completed: updatedTask.completed,
       });
@@ -145,10 +192,17 @@ export function TaskProvider({ children }) {
         payload: previousTask,
       });
 
+      // 401
+      if (error.status === 401) {
+        logout();
+        return;
+      }
+
       setError(error.message);
     }
   };
 
+  // TASK REDAKTƏ ET
   const updateTaskById = async (id, title) => {
     const previousTask = state.tasks.find(
       (task) => task.id === id
@@ -168,6 +222,9 @@ export function TaskProvider({ children }) {
     });
 
     try {
+      // Token yoxla
+      validateToken();
+
       await updateTask(id, {
         title,
       });
@@ -178,10 +235,17 @@ export function TaskProvider({ children }) {
         payload: previousTask,
       });
 
+      // 401
+      if (error.status === 401) {
+        logout();
+        return;
+      }
+
       setError(error.message);
     }
   };
 
+  // ERROR TƏMİZLƏ
   const clearError = () => {
     setError("");
   };
@@ -190,10 +254,12 @@ export function TaskProvider({ children }) {
     tasks: state.tasks,
     loading,
     error,
+
     addTask,
     deleteTask: deleteTaskById,
     toggleTask,
     updateTask: updateTaskById,
+
     clearError,
   };
 
