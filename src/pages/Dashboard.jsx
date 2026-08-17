@@ -1,6 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../features/auth/AuthContext";
 import TaskList from "../features/tasks/TaskList";
+import ErrorTest from "../components/ErrorTest";
+import StaleClosureTest from "../components/StaleClosureTest";
 
 function Dashboard() {
   const { user, logout } = useAuth();
@@ -32,7 +34,9 @@ return (
     </div>
 
     <TaskList />
+<ErrorTest />
 
+<StaleClosureTest />
   </section>
 );
 }

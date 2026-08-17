@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useForm } from "react-hook-form";
 
 import { useTasks } from "./TaskContext";
 import TaskItem from "./TaskItem";
@@ -12,59 +12,21 @@ function TaskList() {
     loading,
   } = useTasks();
 
-  const [title, setTitle] = useState("");
-  const [validationError, setValidationError] =
-    useState("");
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    defaultValues: {
+      title: "",
+    },
+  });
 
-  const validateTitle = (value) => {
-    const trimmedValue = value.trim();
+  const handleTaskSubmit = async (data) => {
+    await addTask(data.title.trim());
 
-    if (!trimmedValue) {
-      return "Task adı boş ola bilməz.";
-    }
-
-    if (trimmedValue.length < 3) {
-      return "Task adı ən azı 3 simvoldan ibarət olmalıdır.";
-    }
-
-    if (trimmedValue.length > 100) {
-      return "Task adı maksimum 100 simvol ola bilər.";
-    }
-
-    return "";
-  };
-
-  const handleChange = (event) => {
-    const value = event.target.value;
-
-    setTitle(value);
-
-    if (validationError) {
-      setValidationError(
-        validateTitle(value)
-      );
-    }
-
-    if (error) {
-      clearError();
-    }
-  };
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
-    const errorMessage =
-      validateTitle(title);
-
-    if (errorMessage) {
-      setValidationError(errorMessage);
-      return;
-    }
-
-    await addTask(title.trim());
-
-    setTitle("");
-    setValidationError("");
+    reset();
   };
 
   if (loading) {
@@ -80,35 +42,53 @@ function TaskList() {
       {error && (
         <div className="api-error">
           {error}
+
+          <button
+            type="button"
+            onClick={clearError}
+          >
+            ×
+          </button>
         </div>
       )}
 
       <form
         className="task-form"
-        onSubmit={handleSubmit}
+        onSubmit={handleSubmit(handleTaskSubmit)}
         noValidate
       >
         <div className="task-input-wrapper">
           <input
             type="text"
-            value={title}
-            onChange={handleChange}
             placeholder="Yeni task yaz..."
             maxLength={100}
-            aria-invalid={Boolean(
-              validationError
-            )}
+            {...register("title", {
+              required: "Task adı boş ola bilməz.",
+              validate: (value) => {
+                const trimmedValue =
+                  value.trim();
+
+                if (trimmedValue.length < 3) {
+                  return "Task adı ən azı 3 simvoldan ibarət olmalıdır.";
+                }
+
+                return true;
+              },
+            })}
           />
 
-          {validationError && (
+          {errors.title && (
             <p className="field-error">
-              {validationError}
+              {errors.title.message}
             </p>
           )}
         </div>
 
-        <button type="submit">
-          Əlavə et
+        <button
+          type="submit"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? "Əlavə olunur..." : "Əlavə et"}
         </button>
       </form>
 
@@ -117,16 +97,14 @@ function TaskList() {
           Hələ heç bir task yoxdur.
         </p>
       ) : (
-        <>
-          <div className="task-list">
-            {tasks.map((task) => (
-              <TaskItem
-                key={task.id}
-                task={task}
-              />
-            ))}
-          </div>
-        </>
+        <div className="task-list">
+          {tasks.map((task) => (
+            <TaskItem
+              key={task.id}
+              task={task}
+            />
+          ))}
+        </div>
       )}
     </div>
   );

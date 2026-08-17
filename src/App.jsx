@@ -9,6 +9,7 @@ import NotFound from "./pages/NotFound";
 
 import Login from "./features/auth/Login";
 import ProtectedRoute from "./features/auth/ProtectedRoute";
+import PublicRoute from "./features/auth/PublicRoute";
 
 function App() {
   return (
@@ -19,7 +20,14 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
 
-          <Route path="/login" element={<Login />} />
+          <Route
+            path="/login"
+            element={
+              <PublicRoute>
+                <Login />
+              </PublicRoute>
+            }
+          />
 
           <Route
             path="/dashboard"
@@ -30,10 +38,7 @@ function App() {
             }
           />
 
-          <Route
-            path="*"
-            element={<NotFound />}
-          />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
     </>

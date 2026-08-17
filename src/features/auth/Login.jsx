@@ -1,47 +1,53 @@
-import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import {
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
+
 import { useAuth } from "./AuthContext";
 
 function Login() {
-  const { login, isAuthenticated } = useAuth();
+  const { login } = useAuth();
 
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const from =
+    location.state?.from?.pathname ||
+    "/dashboard";
 
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: {
+      errors,
+      isSubmitting,
+    },
+  } = useForm({
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
 
-  const from = location.state?.from?.pathname || "/dashboard";
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigate("/dashboard", { replace: true });
-    }
-  }, [isAuthenticated, navigate]);
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
-    setError("");
-
-    if (!email || !password) {
-      setError("Email və şifrəni daxil edin.");
-      return;
-    }
-
+  const onSubmit = async (data) => {
     try {
-      setLoading(true);
+      await login(
+        data.email,
+        data.password
+      );
 
-      await login(email, password);
-
-      navigate(from, { replace: true });
+      navigate(from, {
+        replace: true,
+      });
     } catch (error) {
-      setError(error.message);
-    } finally {
-      setLoading(false);
+      setError("root", {
+        type: "server",
+        message:
+          error.message ||
+          "Email və ya şifrə yanlışdır.",
+      });
     }
   };
 
@@ -50,7 +56,11 @@ function Login() {
       <div className="auth-card">
         <h1>Login</h1>
 
-        <form onSubmit={handleSubmit}>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          noValidate
+        >
+          {/* EMAIL */}
           <div className="form-group">
             <label htmlFor="email">
               Email
@@ -59,15 +69,28 @@ function Login() {
             <input
               id="email"
               type="email"
-              value={email}
-              onChange={(event) =>
-                setEmail(event.target.value)
-              }
               placeholder="user@gmail.com"
               autoComplete="email"
+              {...register("email", {
+                required:
+                  "Email daxil edin.",
+                pattern: {
+                  value:
+                    /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                  message:
+                    "Düzgün email ünvanı daxil edin.",
+                },
+              })}
             />
+
+            {errors.email && (
+              <p className="field-error">
+                {errors.email.message}
+              </p>
+            )}
           </div>
 
+          {/* PASSWORD */}
           <div className="form-group">
             <label htmlFor="password">
               Şifrə
@@ -76,33 +99,59 @@ function Login() {
             <input
               id="password"
               type="password"
-              value={password}
-              onChange={(event) =>
-                setPassword(event.target.value)
-              }
               placeholder="123456"
               autoComplete="current-password"
+              {...register("password", {
+                required:
+                  "Şifrə daxil edin.",
+                minLength: {
+                  value: 6,
+                  message:
+                    "Şifrə ən azı 6 simvol olmalıdır.",
+                },
+              })}
             />
+
+            {errors.password && (
+              <p className="field-error">
+                {errors.password.message}
+              </p>
+            )}
           </div>
 
-          {error && (
+          {/* SERVER ERROR */}
+          {errors.root && (
             <p className="error-message">
-              {error}
+              {errors.root.message}
             </p>
           )}
 
-          <button type="submit" disabled={loading}>
-            {loading ? "Daxil olunur..." : "Login"}
+          {/* SUBMIT */}
+          <button
+            type="submit"
+            disabled={isSubmitting}
+          >
+            {isSubmitting
+              ? "Daxil olunur..."
+              : "Login"}
           </button>
         </form>
 
+        {/* DEMO ACCOUNT */}
         <div className="demo-info">
           <p>
-            <strong>Demo hesab:</strong>
+            <strong>
+              Demo hesab:
+            </strong>
           </p>
 
-          <p>Email: user@gmail.com</p>
-          <p>Şifrə: 123456</p>
+          <p>
+            Email: user@gmail.com
+          </p>
+
+          <p>
+            Şifrə: 123456
+          </p>
         </div>
       </div>
     </section>
